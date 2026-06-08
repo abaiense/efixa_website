@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>KICKR — Design System</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="light" name="color-scheme"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.gstatic.com" rel="preconnect"/>
+<!-- Load order: custom.css FIRST (defines tokens), then Tailwind runtime + fonts (same assets as the reference) -->
+<link href="../efixa/assets/custom.css" rel="stylesheet"/>
+<link href="../efixa/assets/71de0c11c987f278_css2.css" rel="stylesheet"/>
+<link href="../efixa/assets/4bcb63d746dc1754_css2.css" rel="stylesheet"/>
+<style id="all-fonts-style-font-geist">.font-geist { font-family: 'Geist', sans-serif !important; }</style>
+<script src="../efixa/assets/176e894661aa9cdc_3.4.17"></script>
+<script src="../efixa/assets/fde878a4f7aebe54_lucide.js"></script>
+<!-- Design-system chrome only. Every value references custom.css tokens; showcased components keep the reference's exact Tailwind classes. -->
+<style>
+  .ds-nav{position:sticky;top:0;z-index:var(--z-sticky-nav);background:var(--color-bg-page);border-bottom:1px solid var(--color-border-subtle);}
+  .ds-nav-inner{max-width:var(--layout-max);margin:0 auto;padding:.55rem var(--spacing-page-x);display:flex;gap:.15rem;align-items:center;overflow-x:auto;}
+  .ds-nav a{font-size:.78rem;line-height:1;color:var(--color-text-muted);text-decoration:none;padding:.4rem .55rem;border-radius:var(--radius-button-sm);white-space:nowrap;transition:color var(--duration-hover) var(--easing-standard);}
+  .ds-nav a:hover{color:var(--color-text-primary);}
+  .ds-nav a.active{color:var(--color-primary);font-weight:var(--font-weight-semibold);}
+  .ds-section{max-width:var(--layout-max);margin:0 auto;padding:var(--spacing-section-y) var(--spacing-page-x);border-top:1px solid var(--color-border-subtle);}
+  .ds-eyebrow{font-family:var(--font-mono);font-size:var(--font-size-caption);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-faint);}
+  .ds-title{font-family:var(--font-display);font-size:var(--font-size-h2);letter-spacing:var(--tracking-tighter);margin:.35rem 0 0;color:var(--color-text-primary);}
+  .ds-lead{color:var(--color-text-secondary);margin-top:.5rem;max-width:48rem;font-size:var(--font-size-body);}
+  .ds-sub{font-family:var(--font-display);font-size:var(--font-size-body-lg);letter-spacing:var(--tracking-tight);margin:2rem 0 .75rem;color:var(--color-text-primary);}
+  .ds-note{font-size:var(--font-size-caption);color:var(--color-text-muted);margin-top:.5rem;}
+  .ds-label{font-family:var(--font-mono);font-size:var(--font-size-caption);color:var(--color-text-secondary);}
+  .ds-row{display:flex;flex-wrap:wrap;gap:1.25rem;align-items:flex-end;margin-top:1.25rem;}
+  .ds-grid{display:grid;gap:1rem;margin-top:1.25rem;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  .ds-state{display:flex;flex-direction:column;gap:.5rem;align-items:flex-start;}
+  .ds-state>.ds-label{order:2;}
+  .ds-table{width:100%;border-collapse:collapse;margin-top:1.25rem;font-size:var(--font-size-body);}
+  .ds-table th,.ds-table td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--color-border-subtle);vertical-align:top;}
+  .ds-table th{font-size:var(--font-size-caption);text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-faint);font-weight:var(--font-weight-medium);}
+  .ds-table code{font-family:var(--font-mono);font-size:.78rem;background:var(--color-bg-subtle);padding:.05rem .3rem;border-radius:4px;}
+  .ds-type-row{display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;padding:1.1rem 0;border-bottom:1px solid var(--color-border-subtle);}
+  .ds-type-meta{display:flex;flex-direction:column;flex-shrink:0;}
+  .ds-type-name{font-size:var(--font-size-caption);color:var(--color-text-secondary);}
+  .ds-type-size{font-family:var(--font-mono);font-size:var(--font-size-caption);color:var(--color-text-faint);text-align:right;flex-shrink:0;white-space:nowrap;}
+  .ds-swatch{display:flex;flex-direction:column;gap:.5rem;}
+  .ds-swatch-box{height:80px;border-radius:var(--radius-panel);border:1px solid var(--color-border-subtle);}
+  .ds-swatch-name{font-family:var(--font-mono);font-size:var(--font-size-caption);color:var(--color-text-primary);}
+  .ds-swatch-val{font-family:var(--font-mono);font-size:.7rem;color:var(--color-text-muted);}
+  .ds-swatch-use{font-size:.7rem;color:var(--color-text-faint);}
+  .ds-preview{position:relative;overflow:hidden;border:1px solid var(--color-border-subtle);border-radius:var(--radius-panel);background:var(--color-bg-page);padding:1.25rem;}
+  .ds-preview-tall{min-height:460px;}
+  .ds-figma{background:rgba(0,0,0,0.025);}
+  .ds-figma .ds-title::after{content:" · Figma bridge";font-size:var(--font-size-caption);color:var(--color-text-faint);letter-spacing:0;font-family:var(--font-mono);}
+  .ds-pre{background:var(--neutral-900);color:#e5e7eb;border-radius:var(--radius-button);padding:1rem 1.15rem;overflow:auto;font-family:var(--font-mono);font-size:.76rem;line-height:1.65;margin-top:1rem;}
+  .ds-pre .c{color:#9CA3AF;}
+  .ds-pre .k{color:#34D399;}
+  .ds-zstack{display:flex;flex-direction:column-reverse;gap:.5rem;margin-top:1.25rem;}
+  .ds-zlayer{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem 1rem;border:1px solid var(--color-border-subtle);border-radius:var(--radius-button);background:var(--color-bg-surface);}
+  .ds-zlayer .ds-label{font-family:var(--font-mono);}
+  .ds-scale-strip{display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-top:1.25rem;}
+  .ds-scale-block{display:flex;flex-direction:column;gap:.35rem;align-items:flex-start;}
+  .ds-scale-fill{height:40px;background:var(--color-primary);border-radius:6px;}
+</style>
+</head>
+<body class="min-h-full antialiased selection:bg-black selection:text-white text-black bg-gray-50" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'">
+
+<!-- ════════ Utility nav (sections = docs) ════════ -->
+<div class="ds-nav">
+  <div class="ds-nav-inner" id="ds-nav">
+    <a href="#hero" class="active">Hero</a>
+    <a href="#typography">Type</a>
+    <a href="#tokens">Tokens</a>
+    <a href="#colors">Colors</a>
+    <a href="#components">Components</a>
+    <a href="#forms">Forms</a>
+    <a href="#layout">Layout</a>
+    <a href="#responsive">Responsive</a>
+    <a href="#focus">Focus</a>
+    <a href="#zindex">Z-index</a>
+    <a href="#motion">Motion</a>
+    <a href="#icons">Icons</a>
+    <a href="#figma-naming">Naming</a>
+    <a href="#figma-variants">Variants</a>
+    <a href="#figma-autolayout">Auto Layout</a>
+    <a href="#figma-variables">Variables</a>
+    <a href="#figma-devmode">Dev Mode</a>
+    <a href="#figma-codeconnect">Code Connect</a>
+  </div>
+</div>
+
+<!-- ════════ 0) HERO — exact clone, text adapted ════════ -->
+<!-- Ambient BG -->
+<div class="absolute -z-10 inset-0 overflow-hidden">
+<div class="absolute top-[-10%] left-1/2 -translate-x-1/2 h-[900px] w-[1200px] rounded-full blur-3xl opacity-20" style="background: radial-gradient(1200px 600px at 50% 30%, #111827 10%, #9CA3AF 40%, transparent 70%);"></div>
+</div>
+<section class="max-w-7xl sm:px-8 mr-auto ml-auto pr-6 pl-6" id="hero">
+<div class="pt-10 pb-12 sm:pt-16 sm:pb-20 lg:pt-24 lg:pb-28">
+<div class="grid lg:grid-cols-12 gap-8 items-center">
+<div class="lg:col-span-6">
+<h1 class="sm:text-6xl lg:text-7xl leading-[1.05] text-4xl text-black tracking-tighter font-geist" style="">
+  The KICKR design system
+  <span class="block text-black/40 tracking-tighter font-geist" style="">Every token, component and pattern, straight from the source.</span>
+</h1>
+<div class="flex flex-wrap gap-3 mt-8 items-center">
+<a class="group relative inline-flex items-center gap-2 text-sm font-medium text-white ring-1 ring-white/10 rounded-2xl font-geist" href="#components" style="background: linear-gradient(135deg, rgb(31, 41, 55) 0%, rgb(75, 85, 99) 100%); box-shadow: rgb(75, 85, 99) 0px 0px 1.6em -0.6em inset; height: 2.8em; padding: 0.35em 3.3em 0.35em 1.2em; letter-spacing: 0.02em;">
+                Browse components
+                <span class="absolute right-[0.3em] flex items-center justify-center h-[2.2em] w-[2.2em] transition-all duration-300 group-hover:w-[calc(100%-0.6em)] active:scale-95 bg-white rounded-[0.7em]" style="box-shadow:0.1em 0.1em 0.6em 0.2em #4b5563;">
+<svg aria-hidden="true" class="lucide lucide-arrow-right w-4 h-4 text-gray-600 transition-transform duration-300 group-hover:translate-x-[0.1em]" data-lucide="arrow-right" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+</span>
+</a>
+<a class="inline-flex items-center gap-2 text-sm text-black/70 hover:text-black transition font-geist" href="#colors">
+                Jump to tokens
+                <svg aria-hidden="true" class="lucide lucide-arrow-up-right w-4 h-4" data-lucide="arrow-up-right" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+</a>
+</div>
+<div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 backdrop-blur px-3 py-2">
+<span class="inline-flex h-5 w-5 items-center justify-center text-emerald-600">
+<svg aria-hidden="true" class="lucide lucide-truck w-4 h-4" data-lucide="truck" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg>
+</span>
+<span class="text-xs text-black/70 font-geist">Tailwind CSS v3.4.17</span>
+</div>
+<div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 backdrop-blur px-3 py-2">
+<span class="inline-flex h-5 w-5 items-center justify-center text-blue-600">
+<svg aria-hidden="true" class="lucide lucide-rotate-ccw w-4 h-4" data-lucide="rotate-ccw" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+</span>
+<span class="text-xs text-black/70 font-geist">Geist + Inter type</span>
+</div>
+<div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 backdrop-blur px-3 py-2">
+<span class="inline-flex h-5 w-5 items-center justify-center text-purple-600">
+<svg aria-hidden="true" class="lucide lucide-headphones w-4 h-4" data-lucide="headphones" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"></path></svg>
+</span>
+<span class="text-xs text-black/70 font-geist">Lucide icon set</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-6">
+<div class="relative rounded-3xl overflow-hidden border border-black/5 bg-white/30 backdrop-blur">
+<img alt="Sneaker hero" class="w-full h-[420px] sm:h-[520px] object-cover" src="assets/ea61049bac4b25b3_6fdbbeb3-36ec-475f-8227-1bc9b7.jpg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none"></div>
+<div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+<div class="inline-flex items-center gap-2 rounded-full bg-white/40 backdrop-blur px-3 py-1.5 border border-black/5">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-xs text-black/70 font-geist">Living spec: in sync</span>
+</div>
+<button class="inline-flex items-center gap-2 text-xs rounded-lg bg-white/40 backdrop-blur px-3 h-8 border border-black/5 text-black/70 hover:bg-white/60 transition font-geist">
+                  View source
+                  <svg aria-hidden="true" class="lucide lucide-eye w-3 h-3" data-lucide="eye" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ════════ 1) TYPOGRAPHY ════════ -->
+<section class="ds-section" id="typography">
+<p class="ds-eyebrow">01 — Foundations</p>
+<h2 class="ds-title">Typography</h2>
+<p class="ds-lead">Display set in <strong>Geist</strong> (<code style="font-family:var(--font-mono)">.font-geist</code>), body in <strong>Inter</strong>. Sizes, tracking and line-heights come verbatim from the reference Tailwind classes.</p>
+
+<div style="margin-top:1.5rem">
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Heading 1 — hero</span>
+<h1 class="text-4xl sm:text-6xl lg:text-7xl leading-[1.05] text-black tracking-tighter font-geist">Sneakers that move</h1></div>
+<span class="ds-type-size">36 / 60 / 72px · ‑0.05em</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Heading 2 — section / statement</span>
+<p class="text-2xl sm:text-3xl lg:text-4xl leading-tight text-black tracking-tighter font-geist">We curate performance and lifestyle sneakers.</p></div>
+<span class="ds-type-size">24 / 30 / 36px · 1.25</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Heading 3 — block title</span>
+<h2 class="text-2xl sm:text-3xl text-black tracking-tighter font-geist">New Arrivals</h2></div>
+<span class="ds-type-size">24 / 30px · ‑0.05em</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Heading 4 — card / drawer title</span>
+<h3 class="text-base font-medium text-black tracking-tight font-geist">AirLite Runner</h3></div>
+<span class="ds-type-size">16 / 24px · 500</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Bold M — semibold on dark</span>
+<h4 class="font-semibold tracking-tight text-black font-geist">Stay in the loop</h4></div>
+<span class="ds-type-size">16 / 24px · 600</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Bold S — overline / eyebrow</span>
+<h5 class="text-xs uppercase tracking-[0.2em] font-medium text-black/80 font-geist">Shop</h5></div>
+<span class="ds-type-size">12 / 16px · 500 · 0.2em</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Paragraph — large body</span>
+<p class="leading-relaxed text-lg text-black/60 font-geist">From independent labels to iconic names, a considered selection.</p></div>
+<span class="ds-type-size">18 / 28px · 1.625</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Regular M — default body</span>
+<p class="text-sm text-black/60 font-geist">Cloud Grey / White — premium daily comfort.</p></div>
+<span class="ds-type-size">14 / 20px · 400</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Regular S — caption / meta</span>
+<p class="text-xs text-black/50 font-geist">Taxes and shipping calculated at checkout.</p></div>
+<span class="ds-type-size">12 / 16px · 400</span>
+</div>
+<div class="ds-type-row">
+<div class="ds-type-meta"><span class="ds-type-name">Micro — badge count</span>
+<span class="text-[10px] leading-none text-black font-geist">0</span></div>
+<span class="ds-type-size">10px · 1</span>
+</div>
+</div>
+</section>
+
+<!-- ════════ 2) DESIGN TOKENS ════════ -->
+<section class="ds-section" id="tokens">
+<p class="ds-eyebrow">02 — Foundations</p>
+<h2 class="ds-title">Design Tokens</h2>
+<p class="ds-lead">The reference hardcodes Tailwind values inline; <code style="font-family:var(--font-mono)">custom.css</code> names them as the single source of truth (primitives → semantic). Swatches and blocks below render from those tokens.</p>
+
+<h3 class="ds-sub">Color tokens</h3>
+<div class="ds-grid">
+<div class="ds-swatch"><div class="ds-swatch-box" style="background:var(--color-primary)"></div><span class="ds-swatch-name">--color-primary</span><span class="ds-swatch-val">#000000</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box" style="background:var(--color-bg-page)"></div><span class="ds-swatch-name">--color-bg-page</span><span class="ds-swatch-val">#F9FAFB</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box" style="background:var(--color-bg-surface)"></div><span class="ds-swatch-name">--color-bg-surface</span><span class="ds-swatch-val">#FFFFFF</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box" style="background:var(--color-success)"></div><span class="ds-swatch-name">--color-success</span><span class="ds-swatch-val">#059669</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box" style="background:var(--color-sale)"></div><span class="ds-swatch-name">--color-sale</span><span class="ds-swatch-val">#E11D48</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box" style="background:var(--color-rating)"></div><span class="ds-swatch-name">--color-rating</span><span class="ds-swatch-val">#F59E0B</span></div>
+</div>
+
+<h3 class="ds-sub">Spacing tokens</h3>
+<div class="ds-scale-strip">
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:var(--space-1)"></div><span class="ds-label">--space-1</span><span class="ds-swatch-val">4px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:var(--space-2)"></div><span class="ds-label">--space-2</span><span class="ds-swatch-val">8px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:var(--space-3)"></div><span class="ds-label">--space-3</span><span class="ds-swatch-val">12px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:var(--space-4)"></div><span class="ds-label">--space-4</span><span class="ds-swatch-val">16px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:var(--space-6)"></div><span class="ds-label">--space-6</span><span class="ds-swatch-val">24px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:var(--space-8)"></div><span class="ds-label">--space-8</span><span class="ds-swatch-val">32px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:var(--space-14)"></div><span class="ds-label">--space-14</span><span class="ds-swatch-val">56px</span></div>
+</div>
+
+<h3 class="ds-sub">Radius tokens</h3>
+<div class="ds-row">
+<div class="ds-state"><div style="width:96px;height:64px;background:var(--color-bg-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-button-sm)"></div><span class="ds-label">--radius-button-sm · 8px</span></div>
+<div class="ds-state"><div style="width:96px;height:64px;background:var(--color-bg-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-button)"></div><span class="ds-label">--radius-button · 12px</span></div>
+<div class="ds-state"><div style="width:96px;height:64px;background:var(--color-bg-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-panel)"></div><span class="ds-label">--radius-panel · 16px</span></div>
+<div class="ds-state"><div style="width:96px;height:64px;background:var(--color-bg-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-card)"></div><span class="ds-label">--radius-card · 24px</span></div>
+<div class="ds-state"><div style="width:64px;height:64px;background:var(--color-bg-subtle);border:1px solid var(--color-border-subtle);border-radius:var(--radius-pill)"></div><span class="ds-label">--radius-pill · full</span></div>
+</div>
+
+<h3 class="ds-sub">Shadow tokens</h3>
+<div class="ds-row">
+<div class="ds-state"><div style="width:120px;height:72px;background:var(--color-bg-surface);border-radius:var(--radius-panel);box-shadow:var(--shadow-menu)"></div><span class="ds-label">--shadow-menu</span></div>
+<div class="ds-state"><div style="width:120px;height:72px;background:var(--color-bg-surface);border-radius:var(--radius-panel);box-shadow:var(--shadow-popover)"></div><span class="ds-label">--shadow-popover</span></div>
+<div class="ds-state"><div style="width:120px;height:72px;background:var(--color-bg-surface);border-radius:var(--radius-panel);box-shadow:var(--shadow-card)"></div><span class="ds-label">--shadow-card</span></div>
+<div class="ds-state"><div style="width:120px;height:72px;background:var(--color-bg-surface);border-radius:var(--radius-panel);box-shadow:var(--shadow-elevated)"></div><span class="ds-label">--shadow-elevated</span></div>
+</div>
+
+<h3 class="ds-sub">Typography &amp; motion tokens</h3>
+<table class="ds-table">
+<thead><tr><th>Token</th><th>Value</th><th>Sample</th></tr></thead>
+<tbody>
+<tr><td><code>--font-size-h1</code></td><td>4.5rem / 1.05</td><td><span class="font-geist" style="font-size:1.5rem">Aa</span></td></tr>
+<tr><td><code>--font-size-body</code></td><td>0.875rem / 1.25rem</td><td><span style="font-size:var(--font-size-body)">The quick brown fox</span></td></tr>
+<tr><td><code>--font-weight-semibold</code></td><td>600</td><td><span class="font-geist" style="font-weight:600">Semibold</span></td></tr>
+<tr><td><code>--duration-base</code></td><td>300ms</td><td><span class="ds-label">duration-300</span></td></tr>
+<tr><td><code>--easing-default</code></td><td>cubic-bezier(0.4, 0, 0.2, 1)</td><td><span class="ds-label">standard ease</span></td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ════════ 3) COLORS & SURFACES ════════ -->
+<section class="ds-section" id="colors">
+<p class="ds-eyebrow">03 — Foundations</p>
+<h2 class="ds-title">Colors &amp; Surfaces</h2>
+<p class="ds-lead">A near-monochrome system — black ink on a paper-grey page, frosted white glass, with emerald (success / new), rose (sale) and amber (rating) accents.</p>
+
+<h3 class="ds-sub">Backgrounds &amp; surfaces</h3>
+<div class="ds-grid">
+<div class="ds-swatch"><div class="ds-swatch-box bg-gray-50"></div><span class="ds-swatch-name">.bg-gray-50</span><span class="ds-swatch-val">#F9FAFB</span><span class="ds-swatch-use">page background</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-white"></div><span class="ds-swatch-name">.bg-white</span><span class="ds-swatch-val">#FFFFFF</span><span class="ds-swatch-use">card / popover surface</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-white/40 backdrop-blur" style="background-image:linear-gradient(45deg,#e5e7eb 25%,transparent 25%,transparent 75%,#e5e7eb 75%),linear-gradient(45deg,#e5e7eb 25%,transparent 25%,transparent 75%,#e5e7eb 75%);background-size:16px 16px;background-position:0 0,8px 8px"></div><span class="ds-swatch-name">.bg-white/40</span><span class="ds-swatch-val">rgba(255,255,255,.4)</span><span class="ds-swatch-use">glass cards</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-white/70 backdrop-blur" style="background-image:linear-gradient(45deg,#e5e7eb 25%,transparent 25%,transparent 75%,#e5e7eb 75%),linear-gradient(45deg,#e5e7eb 25%,transparent 25%,transparent 75%,#e5e7eb 75%);background-size:16px 16px;background-position:0 0,8px 8px"></div><span class="ds-swatch-name">.bg-white/70</span><span class="ds-swatch-val">rgba(255,255,255,.7)</span><span class="ds-swatch-use">sticky header</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-black/5"></div><span class="ds-swatch-name">.bg-black/5</span><span class="ds-swatch-val">rgba(0,0,0,.05)</span><span class="ds-swatch-use">chips, icon buttons</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-black"></div><span class="ds-swatch-name">.bg-black</span><span class="ds-swatch-val">#000000</span><span class="ds-swatch-use">primary CTA</span></div>
+</div>
+
+<h3 class="ds-sub">Status &amp; accents</h3>
+<div class="ds-grid">
+<div class="ds-swatch"><div class="ds-swatch-box bg-emerald-500"></div><span class="ds-swatch-name">.bg-emerald-500</span><span class="ds-swatch-val">#10B981</span><span class="ds-swatch-use">live dot / success</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-emerald-500/10 border border-emerald-500/20"></div><span class="ds-swatch-name">.bg-emerald-500/10</span><span class="ds-swatch-val">rgba(16,185,129,.1)</span><span class="ds-swatch-use">"New" badge fill</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-rose-500/10 border border-rose-500/20"></div><span class="ds-swatch-name">.bg-rose-500/10</span><span class="ds-swatch-val">rgba(244,63,94,.1)</span><span class="ds-swatch-use">"Sale" badge fill</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box" style="background:#F59E0B"></div><span class="ds-swatch-name">.text-amber-500</span><span class="ds-swatch-val">#F59E0B</span><span class="ds-swatch-use">rating stars</span></div>
+</div>
+
+<h3 class="ds-sub">Product colorways (swatch dots)</h3>
+<div class="ds-row" style="gap:.6rem;align-items:center">
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-black border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-white border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-gray-200 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-gray-300 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-gray-400 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-blue-500 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-blue-600 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-blue-900 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-red-500 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-yellow-400 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-lime-400 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-lime-700 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-amber-700 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-orange-600 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-neutral-800 border border-black/5"></span>
+<span class="h-8 w-8 rounded-full ring-2 ring-white bg-emerald-500 border border-black/5"></span>
+</div>
+
+<h3 class="ds-sub">Borders &amp; overlays</h3>
+<div class="ds-grid">
+<div class="ds-swatch"><div class="ds-swatch-box bg-white border border-black/5"></div><span class="ds-swatch-name">.border-black/5</span><span class="ds-swatch-val">rgba(0,0,0,.05)</span><span class="ds-swatch-use">all dividers</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-neutral-800 border border-white/20"></div><span class="ds-swatch-name">.border-white/20</span><span class="ds-swatch-val">rgba(255,255,255,.2)</span><span class="ds-swatch-use">dark inputs</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-black/40"></div><span class="ds-swatch-name">.bg-black/40</span><span class="ds-swatch-val">rgba(0,0,0,.4)</span><span class="ds-swatch-use">cart scrim</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-rose-50 border border-rose-200"></div><span class="ds-swatch-name">.border-rose-200</span><span class="ds-swatch-val">#FECDD3</span><span class="ds-swatch-use">mobile "Sale" link</span></div>
+</div>
+
+<h3 class="ds-sub">Gradients</h3>
+<div class="ds-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+<div class="ds-swatch"><div class="ds-swatch-box" style="background: radial-gradient(1200px 600px at 50% 30%, #111827 10%, #9CA3AF 40%, transparent 70%);"></div><span class="ds-swatch-name">--gradient-ambient</span><span class="ds-swatch-use">radial · page backdrop glow</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box" style="background: linear-gradient(135deg, rgb(31,41,55) 0%, rgb(75,85,99) 100%);"></div><span class="ds-swatch-name">--gradient-cta</span><span class="ds-swatch-use">135° · hero primary button</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box bg-gradient-to-b from-neutral-700 to-neutral-900"></div><span class="ds-swatch-name">--gradient-dark-card</span><span class="ds-swatch-use">to-b · footer newsletter</span></div>
+<div class="ds-swatch"><div class="ds-swatch-box" style="background:#9CA3AF"><div class="w-full h-full bg-gradient-to-t from-black/10 via-transparent to-transparent"></div></div><span class="ds-swatch-name">--gradient-image-scrim</span><span class="ds-swatch-use">to-t · image overlay</span></div>
+</div>
+
+<h3 class="ds-sub">Shadows &amp; elevation</h3>
+<div class="ds-row" style="gap:1.5rem">
+<div class="ds-state"><div class="shadow-lg" style="width:140px;height:80px;background:#fff;border-radius:16px"></div><span class="ds-label">.shadow-lg</span><span class="ds-swatch-val">0 10px 15px -3px rgba(0,0,0,.1)</span></div>
+<div class="ds-state"><div class="shadow-xl" style="width:140px;height:80px;background:#fff;border-radius:16px"></div><span class="ds-label">.shadow-xl</span><span class="ds-swatch-val">0 20px 25px -5px rgba(0,0,0,.1)</span></div>
+<div class="ds-state"><div class="shadow-2xl" style="width:140px;height:80px;background:#fff;border-radius:16px"></div><span class="ds-label">.shadow-2xl</span><span class="ds-swatch-val">0 25px 50px -12px rgba(0,0,0,.25)</span></div>
+<div class="ds-state"><div style="width:140px;height:80px;background:#fff;border-radius:16px;box-shadow:var(--shadow-soft)"></div><span class="ds-label">--shadow-elevated</span><span class="ds-swatch-val">6-layer soft stack</span></div>
+</div>
+</section>
+
+<!-- ════════ 4) UI COMPONENTS ════════ -->
+<section class="ds-section" id="components">
+<p class="ds-eyebrow">04 — Library</p>
+<h2 class="ds-title">UI Components</h2>
+<p class="ds-lead">Exact markup from the reference. JS-driven states (hover, active, focus, disabled) are forced by applying the resulting utility class directly in markup and labelled as such.</p>
+
+<h3 class="ds-sub">Buttons — Primary (black)</h3>
+<div class="ds-row" style="align-items:flex-start">
+<div class="ds-state"><span class="ds-label">default</span><button class="h-9 px-4 rounded-xl bg-black text-white text-sm hover:opacity-90 transition font-geist">Checkout</button></div>
+<div class="ds-state"><span class="ds-label">hover (opacity-90)</span><button class="h-9 px-4 rounded-xl bg-black text-white text-sm opacity-90 transition font-geist">Checkout</button></div>
+<div class="ds-state"><span class="ds-label">active (scale-95)</span><button class="h-9 px-4 rounded-xl bg-black text-white text-sm transition font-geist" style="transform:scale(.95)">Checkout</button></div>
+<div class="ds-state"><span class="ds-label">focus (ring)</span><button class="h-9 px-4 rounded-xl bg-black text-white text-sm transition font-geist ring-2 ring-black/5">Checkout</button></div>
+<div class="ds-state"><span class="ds-label">disabled</span><button disabled class="h-9 px-4 rounded-xl bg-black text-white text-sm transition font-geist opacity-30 cursor-default">Checkout</button></div>
+</div>
+
+<h3 class="ds-sub">Buttons — Secondary (outline / white)</h3>
+<div class="ds-row" style="align-items:flex-start">
+<div class="ds-state"><span class="ds-label">default</span><button class="inline-flex items-center justify-center rounded-lg border border-black/5 bg-white text-black/70 hover:bg-black/5 h-9 px-3 text-sm transition font-geist">Sign in</button></div>
+<div class="ds-state"><span class="ds-label">hover (bg-black/5)</span><button class="inline-flex items-center justify-center rounded-lg border border-black/5 bg-black/5 text-black/70 h-9 px-3 text-sm transition font-geist">Sign in</button></div>
+<div class="ds-state"><span class="ds-label">focus</span><button class="inline-flex items-center justify-center rounded-lg border border-black/10 bg-white text-black/70 h-9 px-3 text-sm transition font-geist ring-2 ring-black/5">Sign in</button></div>
+<div class="ds-state"><span class="ds-label">disabled</span><button disabled class="inline-flex items-center justify-center rounded-lg border border-black/5 bg-white text-black/70 h-9 px-3 text-sm transition font-geist opacity-30 cursor-default">Sign in</button></div>
+</div>
+
+<h3 class="ds-sub">Buttons — Icon only</h3>
+<div class="ds-row" style="align-items:flex-start">
+<div class="ds-state"><span class="ds-label">default</span><button aria-label="Wishlist" class="inline-flex items-center justify-center rounded-lg border border-black/5 bg-white text-black/70 hover:bg-black/5 h-9 w-9 transition"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path></svg></button></div>
+<div class="ds-state"><span class="ds-label">hover (bg-black/5)</span><button aria-label="Wishlist" class="inline-flex items-center justify-center rounded-lg border border-black/5 bg-black/5 text-black h-9 w-9 transition"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path></svg></button></div>
+<div class="ds-state"><span class="ds-label">with badge (cart)</span><button aria-label="Cart" class="relative inline-flex items-center justify-center rounded-lg border border-black/5 bg-white text-black/70 hover:bg-black/5 h-9 w-9 transition"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg><span class="absolute -top-1 -right-1 inline-flex items-center justify-center h-4 min-w-[16px] px-1 rounded-full bg-black text-white text-[10px] leading-none font-geist">2</span></button></div>
+</div>
+
+<h3 class="ds-sub">Buttons — Hero CTA (gradient, animated knob) <span class="ds-note" style="display:inline">hover the button</span></h3>
+<div class="ds-row">
+<a class="group relative inline-flex items-center gap-2 text-sm font-medium text-white ring-1 ring-white/10 rounded-2xl font-geist" href="#components" style="background: linear-gradient(135deg, rgb(31, 41, 55) 0%, rgb(75, 85, 99) 100%); box-shadow: rgb(75, 85, 99) 0px 0px 1.6em -0.6em inset; height: 2.8em; padding: 0.35em 3.3em 0.35em 1.2em; letter-spacing: 0.02em;">
+                Shop new arrivals
+                <span class="absolute right-[0.3em] flex items-center justify-center h-[2.2em] w-[2.2em] transition-all duration-300 group-hover:w-[calc(100%-0.6em)] active:scale-95 bg-white rounded-[0.7em]" style="box-shadow:0.1em 0.1em 0.6em 0.2em #4b5563;">
+<svg aria-hidden="true" class="lucide lucide-arrow-right w-4 h-4 text-gray-600 transition-transform duration-300 group-hover:translate-x-[0.1em]" data-lucide="arrow-right" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+</span>
+</a>
+</div>
+
+<h3 class="ds-sub">Cards</h3>
+<div class="ds-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
+<!-- Product card (default) -->
+<div class="group break-inside-avoid block rounded-3xl overflow-hidden bg-white/40 backdrop-blur border border-black/5 hover:bg-white hover:shadow-2xl hover:shadow-black/5 transition-all duration-300">
+<div class="relative">
+<img alt="AirLite Runner" class="w-full h-56 object-cover" src="assets/1a246dacf815c06d_516735eb-313e-4fc9-b07d-790cdd.jpg"/>
+<div class="absolute top-3 left-3 inline-flex items-center px-2.5 h-7 rounded-full bg-emerald-500/10 text-emerald-700 text-xs border border-emerald-500/20 font-geist">New</div>
+<button class="absolute top-3 right-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/60 border border-black/5 text-black/70 hover:text-black hover:bg-white/80 transition"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path></svg></button>
+</div>
+<div class="p-5">
+<div class="flex items-start justify-between gap-4"><div class="flex-1"><h3 class="text-base font-medium text-black tracking-tight font-geist">AirLite Runner</h3><p class="text-sm text-black/60 font-geist">Cloud Grey / White</p></div><div class="shrink-0 text-right"><p class="text-sm text-black/80 font-geist">$129</p></div></div>
+<div class="mt-4 flex items-center justify-between"><div class="flex -space-x-1"><span class="h-5 w-5 rounded-full ring-2 ring-white bg-black border border-black/5"></span><span class="h-5 w-5 rounded-full ring-2 ring-white bg-gray-300 border border-black/5"></span></div><button class="inline-flex items-center gap-2 h-9 px-3 rounded-xl border border-black/5 bg-white text-sm text-black/70 hover:bg-black/5 transition font-geist">Add to cart</button></div>
+</div>
+</div>
+<!-- Card on sale (price strike) -->
+<div class="group break-inside-avoid block rounded-3xl overflow-hidden bg-white/40 backdrop-blur border border-black/5 hover:bg-white hover:shadow-2xl hover:shadow-black/5 transition-all duration-300">
+<div class="relative">
+<img alt="Street Classic" class="w-full h-56 object-cover" src="assets/e9405f153c018bb5_00189d5a-7f25-4559-935e-bbe4ea.jpg"/>
+<div class="absolute top-3 left-3 inline-flex items-center px-2.5 h-7 rounded-full bg-rose-500/10 text-rose-700 text-xs border border-rose-500/20 font-geist">Sale</div>
+</div>
+<div class="p-5">
+<div class="flex items-start justify-between"><div><h3 class="text-base font-medium text-black tracking-tight font-geist">Street Classic</h3><p class="text-sm text-black/60 font-geist">Black / Gum</p></div><div class="text-right"><p class="text-sm text-black/50 line-through font-geist">$99</p><p class="text-sm text-black/80 font-geist">$79</p></div></div>
+</div>
+</div>
+</div>
+<p class="ds-note">Card hover state (lifts to <code>.bg-white</code> + <code>.shadow-2xl</code>) is live — hover a card above.</p>
+
+<h3 class="ds-sub">Badges / tags / chips</h3>
+<div class="ds-row" style="gap:.6rem;align-items:center">
+<div class="inline-flex items-center px-2.5 h-7 rounded-full bg-emerald-500/10 text-emerald-700 text-xs border border-emerald-500/20 font-geist">New</div>
+<div class="inline-flex items-center px-2.5 h-7 rounded-full bg-black text-white text-xs font-geist">Limited</div>
+<div class="inline-flex items-center px-2.5 h-7 rounded-full bg-rose-500/10 text-rose-700 text-xs border border-rose-500/20 font-geist">Sale</div>
+<span class="inline-flex items-center gap-2 px-3 h-9 rounded-xl border border-black/5 bg-white text-sm text-black/70 font-geist">Running</span>
+<span class="inline-flex items-center gap-2 px-3 h-9 rounded-xl border border-black/5 bg-white text-sm text-black/70 font-geist">Lifestyle</span>
+<div class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20 px-2.5 py-1 text-xs font-geist" style="background:#171717"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Free shipping over $75</div>
+</div>
+
+<h3 class="ds-sub">Size chips — checkbox (default / checked)</h3>
+<div class="ds-row" style="gap:.5rem">
+<label class="inline-flex items-center gap-2 px-3 h-8 rounded-lg border border-black/5 bg-black/5 text-xs text-black/70 cursor-pointer select-none"><input class="peer appearance-none h-0 w-0" type="checkbox"/><span class="peer-checked:text-black peer-checked:bg-white peer-checked:border-black/10 px-0 font-geist">7</span></label>
+<label class="inline-flex items-center gap-2 px-3 h-8 rounded-lg border border-black/5 bg-black/5 text-xs text-black/70 cursor-pointer select-none"><input class="peer appearance-none h-0 w-0" type="checkbox" checked/><span class="peer-checked:text-black peer-checked:bg-white peer-checked:border-black/10 px-0 font-geist">8</span></label>
+<label class="inline-flex items-center gap-2 px-3 h-8 rounded-lg border border-black/5 bg-black/5 text-xs text-black/70 cursor-pointer select-none"><input class="peer appearance-none h-0 w-0" type="checkbox"/><span class="peer-checked:text-black peer-checked:bg-white peer-checked:border-black/10 px-0 font-geist">9</span></label>
+<span class="ds-label" style="align-self:center">← size 8 forced <code>checked</code></span>
+</div>
+
+<h3 class="ds-sub">Navigation items / tabs</h3>
+<div class="ds-row" style="gap:1.25rem;align-items:center">
+<a class="text-sm text-black/60 hover:text-black transition font-geist" href="#components">New</a>
+<a class="text-sm text-black hover:text-black transition font-geist" href="#components">Men <span class="ds-label">(hover)</span></a>
+<a class="text-sm text-rose-600 hover:text-rose-700 transition font-geist" href="#components">Sale</a>
+</div>
+
+<h3 class="ds-sub">Pagination</h3>
+<div class="flex items-center gap-2" style="margin-top:1.25rem">
+<button aria-label="Prev" class="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/5 bg-white text-black/70 hover:bg-black/5 transition"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m15 18-6-6 6-6"></path></svg></button>
+<button class="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/5 bg-black text-white transition font-geist">1</button>
+<button class="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/5 bg-white text-black/70 hover:bg-black/5 transition font-geist">2</button>
+<button class="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/5 bg-white text-black/70 hover:bg-black/5 transition font-geist">3</button>
+<button aria-label="Next" class="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/5 bg-white text-black/70 hover:bg-black/5 transition"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m9 18 6-6-6-6"></path></svg></button>
+</div>
+
+<h3 class="ds-sub">Dropdown — Sort menu <span class="ds-note" style="display:inline">forced open</span></h3>
+<div class="ds-preview" style="min-height:280px">
+<div class="relative" style="width:220px">
+<button class="w-full h-9 px-3 rounded-lg border border-black/5 bg-white text-sm text-black/70 hover:bg-black/5 transition inline-flex items-center justify-between"><span class="font-geist">Featured</span><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m6 9 6 6 6-6"></path></svg></button>
+<div class="absolute z-10 mt-2 w-full rounded-xl border border-black/5 bg-white shadow-lg overflow-hidden">
+<button class="w-full text-left px-3 py-2 text-sm hover:bg-black/5 font-geist">Featured</button>
+<button class="w-full text-left px-3 py-2 text-sm hover:bg-black/5 font-geist">Price: Low to High</button>
+<button class="w-full text-left px-3 py-2 text-sm hover:bg-black/5 font-geist">Price: High to Low</button>
+<button class="w-full text-left px-3 py-2 text-sm hover:bg-black/5 font-geist">Newest</button>
+<button class="w-full text-left px-3 py-2 text-sm hover:bg-black/5 font-geist">Best Rated</button>
+</div>
+</div>
+</div>
+
+<h3 class="ds-sub">Popover — Filters <span class="ds-note" style="display:inline">forced open</span></h3>
+<div class="ds-preview" style="min-height:420px">
+<div class="w-[320px] rounded-2xl border border-black/5 bg-white shadow-xl p-4">
+<div class="flex items-center justify-between"><h3 class="text-sm text-black/70 font-geist">Refine</h3><button class="text-xs text-black/60 hover:text-black underline decoration-dotted font-geist">Clear all</button></div>
+<div class="mt-4 space-y-4">
+<div><p class="text-xs text-black/60 mb-2 font-geist">Size</p><div class="flex flex-wrap gap-2">
+<label class="inline-flex items-center gap-2 px-3 h-8 rounded-lg border border-black/5 bg-black/5 text-xs text-black/70 cursor-pointer select-none"><input class="peer appearance-none h-0 w-0" type="checkbox"/><span class="peer-checked:text-black peer-checked:bg-white peer-checked:border-black/10 px-0 font-geist">7</span></label>
+<label class="inline-flex items-center gap-2 px-3 h-8 rounded-lg border border-black/5 bg-black/5 text-xs text-black/70 cursor-pointer select-none"><input class="peer appearance-none h-0 w-0" type="checkbox"/><span class="peer-checked:text-black peer-checked:bg-white peer-checked:border-black/10 px-0 font-geist">8</span></label>
+<label class="inline-flex items-center gap-2 px-3 h-8 rounded-lg border border-black/5 bg-black/5 text-xs text-black/70 cursor-pointer select-none"><input class="peer appearance-none h-0 w-0" type="checkbox"/><span class="peer-checked:text-black peer-checked:bg-white peer-checked:border-black/10 px-0 font-geist">9</span></label>
+</div></div>
+<div><p class="text-xs text-black/60 mb-2 font-geist">Color</p><div class="flex items-center gap-2"><button class="h-6 w-6 rounded-full ring-2 ring-black/5 bg-black"></button><button class="h-6 w-6 rounded-full ring-2 ring-black/5 bg-white border border-black/5"></button><button class="h-6 w-6 rounded-full ring-2 ring-black/5 bg-red-500"></button><button class="h-6 w-6 rounded-full ring-2 ring-black/5 bg-blue-500"></button><button class="h-6 w-6 rounded-full ring-2 ring-black/5 bg-emerald-500"></button></div></div>
+<div class="pt-2"><button class="w-full h-9 rounded-xl bg-black text-white text-sm hover:opacity-90 transition font-geist">Apply filters</button></div>
+</div>
+</div>
+</div>
+
+<h3 class="ds-sub">Modal / Drawer — Cart <span class="ds-note" style="display:inline">forced open; <code>fixed</code>→<code>absolute</code> so it stays inside this preview</span></h3>
+<div class="ds-preview ds-preview-tall" style="padding:0">
+<div class="absolute inset-0 z-50">
+<div class="absolute inset-0 bg-black/40 transition-opacity"></div>
+<aside aria-labelledby="cart-title-ds" aria-modal="true" class="absolute right-0 top-0 h-full w-full sm:w-[420px] bg-white shadow-2xl border-l border-black/5 transition-transform" role="dialog">
+<div class="flex h-full flex-col">
+<header class="flex items-center justify-between px-5 h-14 border-b border-black/5">
+<div class="flex items-center gap-2"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M16 10a4 4 0 0 1-8 0"></path><path d="M3.103 6.034h17.794"></path><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"></path></svg><h3 class="text-sm font-medium tracking-tight font-geist" id="cart-title-ds">Your cart</h3></div>
+<button aria-label="Close cart" class="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/5 bg-white text-black/70 hover:bg-black/5 transition"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+</header>
+<div class="flex-1 px-6 py-10 text-center text-black/60">
+<div class="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-black/5 text-black/60"><svg class="lucide w-5 h-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 22v-9"></path><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"></path><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"></path><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"></path></svg></div>
+<p class="text-sm font-geist">Your cart is empty.</p><p class="text-xs text-black/50 mt-1 font-geist">Add a pair to get started.</p>
+</div>
+<footer class="border-t border-black/5 p-5">
+<div class="flex items-center justify-between text-sm"><span class="text-black/60 font-geist">Subtotal</span><span class="font-medium tracking-tight font-geist">$0</span></div>
+<p class="mt-1 text-xs text-black/50 font-geist">Taxes and shipping calculated at checkout.</p>
+<div class="mt-4 flex gap-2"><button class="flex-1 h-10 rounded-xl border border-black/5 bg-white text-sm text-black/70 hover:bg-black/5 transition font-geist">Continue shopping</button><button class="flex-1 h-10 rounded-xl bg-black text-white text-sm hover:opacity-90 transition font-geist">Checkout</button></div>
+</footer>
+</div>
+</aside>
+</div>
+</div>
+
+<h3 class="ds-sub">Mobile menu panel <span class="ds-note" style="display:inline">forced open</span></h3>
+<div class="ds-preview">
+<div class="border-t border-black/5 bg-white/80 backdrop-blur" style="max-width:420px">
+<div class="px-6 py-3">
+<nav class="grid grid-cols-2 gap-2">
+<a class="text-sm px-3 py-2 rounded-lg border border-black/5 hover:bg-black/5 text-black/70 hover:text-black transition font-geist" href="#components">New</a>
+<a class="text-sm px-3 py-2 rounded-lg border border-black/5 hover:bg-black/5 text-black/70 hover:text-black transition font-geist" href="#components">Men</a>
+<a class="text-sm px-3 py-2 rounded-lg border border-black/5 hover:bg-black/5 text-black/70 hover:text-black transition font-geist" href="#components">Women</a>
+<a class="text-sm px-3 py-2 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition font-geist" href="#components">Sale</a>
+</nav>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ════════ 6) FORMS ════════ -->
+<section class="ds-section" id="forms">
+<p class="ds-eyebrow">05 — Patterns</p>
+<h2 class="ds-title">Form Patterns</h2>
+<p class="ds-lead">The reference uses placeholder-driven inputs (no <code>&lt;label&gt;</code>, helper or error styling). Shown as-is, with attributes preserved.</p>
+
+<h3 class="ds-sub">Search field (light) — default / focus</h3>
+<div class="ds-row" style="align-items:flex-start;gap:1.5rem">
+<div class="ds-state" style="width:320px"><span class="ds-label">default</span>
+<div class="relative w-full">
+<input class="w-full h-10 pr-10 pl-10 rounded-xl border border-black/5 bg-white/70 backdrop-blur placeholder-black/40 text-sm outline-none focus:ring-2 focus:ring-black/5 focus:border-black/10 transition" placeholder="Search sneakers, brands, colors…" type="text"/>
+<div class="absolute left-3 inset-y-0 flex items-center pointer-events-none text-black/50"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg></div>
+<button class="absolute right-2 inset-y-0 my-auto inline-flex items-center justify-center h-7 px-2 rounded-lg bg-black/5 text-xs text-black/60 hover:text-black hover:bg-black/10 transition font-geist">⌘K</button>
+</div></div>
+<div class="ds-state" style="width:320px"><span class="ds-label">focus (ring-2 ring-black/5 border-black/10)</span>
+<div class="relative w-full">
+<input class="w-full h-10 pr-10 pl-10 rounded-xl border border-black/10 bg-white/70 backdrop-blur placeholder-black/40 text-sm outline-none ring-2 ring-black/5 transition" placeholder="Search sneakers, brands, colors…" type="text" value="AeroFlex"/>
+<div class="absolute left-3 inset-y-0 flex items-center pointer-events-none text-black/50"><svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg></div>
+</div></div>
+</div>
+
+<h3 class="ds-sub">Newsletter form (dark surface) — complete unit</h3>
+<p class="ds-note">Required field: the email input carries the <code>required</code> attribute (no visual asterisk in the reference).</p>
+<div class="ds-preview" style="background:#171717">
+<div style="max-width:480px">
+<h4 class="text-white font-semibold tracking-tight font-geist mb-3">Stay in the loop</h4>
+<form class="flex items-center gap-2">
+<input class="w-full h-10 px-3 rounded-xl border border-white/20 bg-black/20 text-sm placeholder-white/40 text-white outline-none focus:ring-2 focus:ring-white/20 focus:border-white/40 backdrop-blur" placeholder="you@domain.com" required="" type="email"/>
+<button class="inline-flex items-center gap-2 h-10 px-4 rounded-xl ring-1 ring-white/20 text-sm text-white bg-black/20 hover:bg-white hover:text-black transition font-geist">Join <svg class="lucide w-3 h-3" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg></button>
+</form>
+</div>
+</div>
+</section>
+
+<!-- ════════ 7) LAYOUT & SPACING ════════ -->
+<section class="ds-section" id="layout">
+<p class="ds-eyebrow">06 — Patterns</p>
+<h2 class="ds-title">Layout &amp; Spacing</h2>
+
+<h3 class="ds-sub">Spacing scale strip</h3>
+<div class="ds-scale-strip">
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:.25rem"></div><span class="ds-label">gap-1</span><span class="ds-swatch-val">4px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:.5rem"></div><span class="ds-label">gap-2</span><span class="ds-swatch-val">8px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:.75rem"></div><span class="ds-label">gap-3</span><span class="ds-swatch-val">12px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:1rem"></div><span class="ds-label">gap-4 / p-4</span><span class="ds-swatch-val">16px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:1.25rem"></div><span class="ds-label">p-5</span><span class="ds-swatch-val">20px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:1.5rem"></div><span class="ds-label">gap-6 / px-6</span><span class="ds-swatch-val">24px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:2rem"></div><span class="ds-label">gap-8 / sm:px-8</span><span class="ds-swatch-val">32px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:2.5rem"></div><span class="ds-label">py-10</span><span class="ds-swatch-val">40px</span></div>
+<div class="ds-scale-block"><div class="ds-scale-fill" style="width:3.5rem"></div><span class="ds-label">py-14</span><span class="ds-swatch-val">56px</span></div>
+</div>
+
+<h3 class="ds-sub">Pattern — page container</h3>
+<div class="ds-preview"><div class="max-w-7xl mx-auto px-6 sm:px-8" style="background:repeating-linear-gradient(90deg,var(--color-bg-subtle),var(--color-bg-subtle) 1px,transparent 1px,transparent 24px);outline:1px dashed var(--color-border-subtle)"><div class="bg-white border border-black/5 rounded-2xl p-5"><span class="ds-label">.max-w-7xl · .mx-auto · .px-6 · .sm:px-8</span></div></div></div>
+
+<h3 class="ds-sub">Pattern — hero split (12-col grid)</h3>
+<div class="grid lg:grid-cols-12 gap-8 items-center" style="margin-top:1.25rem">
+<div class="lg:col-span-6 bg-white border border-black/5 rounded-2xl p-5"><span class="ds-label">.lg:col-span-6 — copy</span></div>
+<div class="lg:col-span-6 bg-white border border-black/5 rounded-2xl p-5" style="min-height:90px"><span class="ds-label">.lg:col-span-6 — media</span></div>
+</div>
+
+<h3 class="ds-sub">Pattern — product grid (CSS columns masonry)</h3>
+<div class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6" style="margin-top:1.25rem">
+<div class="break-inside-avoid bg-white border border-black/5 rounded-2xl p-5" style="min-height:120px"><span class="ds-label">.columns-1 md:columns-2 lg:columns-3</span></div>
+<div class="break-inside-avoid bg-white border border-black/5 rounded-2xl p-5" style="min-height:80px"><span class="ds-label">.break-inside-avoid</span></div>
+<div class="break-inside-avoid bg-white border border-black/5 rounded-2xl p-5" style="min-height:100px"><span class="ds-label">.gap-6 .space-y-6</span></div>
+</div>
+</section>
+
+<!-- ════════ 8) RESPONSIVE ════════ -->
+<section class="ds-section" id="responsive">
+<p class="ds-eyebrow">07 — Patterns</p>
+<h2 class="ds-title">Responsive &amp; Breakpoints</h2>
+<table class="ds-table">
+<thead><tr><th>Name</th><th>Min-width</th><th>Class prefix</th><th>Used for</th></tr></thead>
+<tbody>
+<tr><td>base</td><td>0</td><td><code>—</code></td><td>1-col stacks, mobile search</td></tr>
+<tr><td>sm</td><td>640px</td><td><code>sm:</code></td><td>3-up trust grid, larger type, px-8</td></tr>
+<tr><td>md</td><td>768px</td><td><code>md:</code></td><td>desktop nav, 12-col grids, 2-col masonry</td></tr>
+<tr><td>lg</td><td>1024px</td><td><code>lg:</code></td><td>search bar, col-span splits, 3-col masonry</td></tr>
+</tbody>
+</table>
+
+<h3 class="ds-sub">Reflow — trust badges (1-col → 3-col @ sm)</h3>
+<div class="ds-row" style="gap:2rem;align-items:flex-start">
+<div class="ds-state"><span class="ds-label">narrow (base · grid-cols-1)</span>
+<div class="grid grid-cols-1 gap-3" style="width:200px"><div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 px-3 py-2"><span class="text-xs text-black/70 font-geist">Free shipping</span></div><div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 px-3 py-2"><span class="text-xs text-black/70 font-geist">30-day returns</span></div><div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 px-3 py-2"><span class="text-xs text-black/70 font-geist">24/7 support</span></div></div>
+</div>
+<div class="ds-state" style="flex:1"><span class="ds-label">wide (sm:grid-cols-3)</span>
+<div class="grid grid-cols-3 gap-3" style="min-width:360px"><div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 px-3 py-2"><span class="text-xs text-black/70 font-geist">Free shipping</span></div><div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 px-3 py-2"><span class="text-xs text-black/70 font-geist">30-day returns</span></div><div class="flex items-center gap-2 rounded-xl border border-black/5 bg-white/40 px-3 py-2"><span class="text-xs text-black/70 font-geist">24/7 support</span></div></div>
+</div>
+</div>
+<p class="ds-note">Header desktop nav uses <code>.hidden .md:flex</code>; the hamburger uses <code>.md:hidden</code> — the menu swaps at the <strong>md (768px)</strong> breakpoint.</p>
+</section>
+
+<!-- ════════ 9) FOCUS & ACCESSIBILITY ════════ -->
+<section class="ds-section" id="focus">
+<p class="ds-eyebrow">08 — System</p>
+<h2 class="ds-title">Focus &amp; Accessibility</h2>
+<p class="ds-lead">Custom focus is carried by inputs only, via a <code>box-shadow</code> ring (<code>focus:ring-2</code>) plus a darkened border — buttons rely on the browser default. Inputs also clear the UA outline with <code>outline-none</code>.</p>
+
+<h3 class="ds-sub">Focus ring specimen</h3>
+<div class="ds-row" style="align-items:flex-start;gap:1.5rem">
+<div class="ds-state" style="width:300px"><span class="ds-label">input :focus (light)</span><input class="w-full h-10 px-3 rounded-xl border border-black/10 bg-white/70 text-sm outline-none ring-2 ring-black/5 transition" value="Focused input" /></div>
+<div class="ds-state" style="width:300px"><span class="ds-label">input :focus (dark)</span><input class="w-full h-10 px-3 rounded-xl border border-white/40 bg-black/20 text-sm text-white outline-none ring-2 ring-white/20 transition" value="Focused input" style="background:#171717"/></div>
+<div class="ds-state"><span class="ds-label">tab here →</span><input class="h-10 px-3 rounded-xl border border-black/5 bg-white/70 text-sm outline-none focus:ring-2 focus:ring-black/5 focus:border-black/10 transition" placeholder="click / tab to focus" type="text" tabindex="0"/></div>
+</div>
+
+<h3 class="ds-sub">Ring anatomy</h3>
+<table class="ds-table">
+<thead><tr><th>Property</th><th>Light input</th><th>Dark input</th></tr></thead>
+<tbody>
+<tr><td>CSS property</td><td><code>box-shadow</code> (ring) + <code>border-color</code></td><td><code>box-shadow</code> (ring) + <code>border-color</code></td></tr>
+<tr><td>Ring color</td><td><code>rgba(0,0,0,.05)</code></td><td><code>rgba(255,255,255,.2)</code></td></tr>
+<tr><td>Ring width</td><td>2px</td><td>2px</td></tr>
+<tr><td>Border on focus</td><td><code>rgba(0,0,0,.1)</code></td><td><code>rgba(255,255,255,.4)</code></td></tr>
+<tr><td>Outline</td><td><code>outline-none</code> (reset)</td><td><code>outline-none</code> (reset)</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ════════ 10) Z-INDEX ════════ -->
+<section class="ds-section" id="zindex">
+<p class="ds-eyebrow">09 — System</p>
+<h2 class="ds-title">Z-index / Stacking Layers</h2>
+<p class="ds-lead">Top of screen (highest) at top of list.</p>
+<div class="ds-zstack">
+<div class="ds-zlayer" style="background:var(--color-bg-page)"><span class="font-geist">Ambient background glow</span><span class="ds-label">.-z-10 · z = -10</span></div>
+<div class="ds-zlayer"><span class="font-geist">Footer accents</span><span class="ds-label">.-z-0 · z = 0</span></div>
+<div class="ds-zlayer"><span class="font-geist">Dropdown / sort menu · footer content</span><span class="ds-label">.z-10 · z = 10</span></div>
+<div class="ds-zlayer" style="box-shadow:var(--shadow-menu)"><span class="font-geist">Sticky header &amp; Cart drawer</span><span class="ds-label">.z-50 · z = 50</span></div>
+</div>
+</section>
+
+<!-- ════════ 11) MOTION ════════ -->
+<section class="ds-section" id="motion">
+<p class="ds-eyebrow">10 — System</p>
+<h2 class="ds-title">Motion &amp; Interaction</h2>
+<p class="ds-lead">All transitions ease on <code>cubic-bezier(0.4,0,0.2,1)</code>. Default 150ms; emphasised moves use <code>duration-300</code>.</p>
+<div class="ds-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+<div class="ds-card"><span class="ds-label">.animate-pulse · 2s infinite</span><div style="margin-top:1rem;display:flex;align-items:center;gap:.5rem"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span class="text-xs text-black/70 font-geist">live status dot</span></div></div>
+<div class="ds-card"><span class="ds-label">.hover:shadow-2xl · card lift</span><div class="group rounded-2xl border border-black/5 bg-white/40 hover:bg-white hover:shadow-2xl transition-all duration-300" style="margin-top:1rem;height:64px"></div></div>
+<div class="ds-card"><span class="ds-label">.active:scale-95 · press</span><button class="h-9 px-4 rounded-xl bg-black text-white text-sm active:scale-95 transition font-geist" style="margin-top:1rem">Press me</button></div>
+<div class="ds-card"><span class="ds-label">group-hover knob expand</span>
+<div style="margin-top:1rem"><a class="group relative inline-flex items-center gap-2 text-sm font-medium text-white ring-1 ring-white/10 rounded-2xl font-geist" href="#motion" style="background:linear-gradient(135deg,rgb(31,41,55),rgb(75,85,99));height:2.6em;padding:.35em 3.1em .35em 1.1em"><span class="font-geist">Hover</span><span class="absolute right-[0.3em] flex items-center justify-center h-[2.2em] w-[2.2em] transition-all duration-300 group-hover:w-[calc(100%-0.6em)] bg-white rounded-[0.7em]"><svg class="lucide w-4 h-4 text-gray-600 transition-transform duration-300 group-hover:translate-x-[0.1em]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span></a></div></div>
+<div class="ds-card"><span class="ds-label">.transition · link color</span><div style="margin-top:1rem"><a class="text-sm text-black/60 hover:text-black transition font-geist" href="#motion">Hover this link</a></div></div>
+</div>
+<div style="margin-top:1.25rem"><button class="h-9 px-4 rounded-xl bg-black text-white text-sm hover:opacity-90 transition font-geist" id="ds-replay">Replay pulse</button> <span class="ds-note" style="display:inline">re-triggers <code>.animate-pulse</code> on the dots above</span></div>
+</section>
+
+<!-- ════════ 12) ICONS ════════ -->
+<section class="ds-section" id="icons">
+<p class="ds-eyebrow">11 — Library</p>
+<h2 class="ds-title">Icons</h2>
+<p class="ds-lead">Lucide outline set (<code>data-lucide</code>, <code>stroke-width="2"</code>, <code>currentColor</code>) loaded from <code>assets/…_lucide.js</code>. Two brand glyphs (X, YouTube) are inline filled SVG.</p>
+
+<h3 class="ds-sub">Set — sizes w-3 / w-4 / w-5, color inherits</h3>
+<div class="ds-row" style="gap:1.25rem;align-items:center;color:var(--color-text-strong)">
+<svg class="lucide w-5 h-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+<svg class="lucide w-5 h-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path></svg>
+<svg class="lucide w-5 h-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+<svg class="lucide w-5 h-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg>
+<svg class="lucide w-5 h-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"></path></svg>
+<svg class="lucide w-5 h-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="m6 9 6 6 6-6"></path></svg>
+<svg class="lucide w-5 h-5 fill-current text-amber-500" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+<svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+<svg class="lucide w-4 h-4 text-emerald-600" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M20 6 9 17l-5-5"></path></svg>
+<svg class="lucide w-3 h-3" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+<svg class="lucide w-5 h-5 text-purple-600" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"></path></svg>
+</div>
+<h3 class="ds-sub">Color inheritance</h3>
+<div class="ds-row" style="gap:1rem;align-items:center">
+<button class="inline-flex items-center gap-2 h-9 px-3 rounded-xl bg-black text-white text-sm font-geist">Add <svg class="lucide w-3 h-3" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button>
+<span class="inline-flex items-center gap-2 text-rose-600 text-sm font-geist">Sale <svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></span>
+<span class="inline-flex items-center gap-2 text-emerald-600 text-sm font-geist">In stock <svg class="lucide w-4 h-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M20 6 9 17l-5-5"></path></svg></span>
+</div>
+</section>
+
+<!-- ════════ FIGMA BRIDGE ════════ -->
+
+<!-- 13) Naming -->
+<section class="ds-section ds-figma" id="figma-naming">
+<p class="ds-eyebrow">12 — Figma Bridge</p>
+<h2 class="ds-title">Component Naming Map</h2>
+<table class="ds-table">
+<thead><tr><th>Component</th><th>HTML element / class</th><th>Figma path</th></tr></thead>
+<tbody>
+<tr><td>Primary Button</td><td><code>button.bg-black.text-white</code></td><td><code>Button/Primary/Default</code></td></tr>
+<tr><td>Secondary Button</td><td><code>button.border.bg-white</code></td><td><code>Button/Secondary/Default</code></td></tr>
+<tr><td>Icon Button</td><td><code>button.h-9.w-9</code></td><td><code>Button/Icon/Default</code></td></tr>
+<tr><td>Hero CTA</td><td><code>a.group.rounded-2xl</code></td><td><code>Button/Cta/Default</code></td></tr>
+<tr><td>Search Input</td><td><code>input[type=text]</code></td><td><code>Input/Search/Default</code></td></tr>
+<tr><td>Email Input</td><td><code>input[type=email]</code></td><td><code>Input/Email/Default</code></td></tr>
+<tr><td>Product Card</td><td><code>div.group.rounded-3xl</code></td><td><code>Card/Product/Default</code></td></tr>
+<tr><td>Badge — New</td><td><code>.bg-emerald-500/10</code></td><td><code>Badge/New</code></td></tr>
+<tr><td>Badge — Limited</td><td><code>.bg-black.text-white</code></td><td><code>Badge/Limited</code></td></tr>
+<tr><td>Badge — Sale</td><td><code>.bg-rose-500/10</code></td><td><code>Badge/Sale</code></td></tr>
+<tr><td>Chip</td><td><code>span.rounded-xl.border</code></td><td><code>Chip/Default</code></td></tr>
+<tr><td>Size Chip</td><td><code>label &gt; input[checkbox]</code></td><td><code>Chip/Size/Default</code> · <code>/Selected</code></td></tr>
+<tr><td>Nav Link</td><td><code>a.text-black/60</code></td><td><code>Nav/Link/Default</code></td></tr>
+<tr><td>Pagination Item</td><td><code>button.h-9.w-9.rounded-lg</code></td><td><code>Pagination/Item/Default</code> · <code>/Active</code></td></tr>
+<tr><td>Sort Dropdown</td><td><code>#sort-menu</code></td><td><code>Dropdown/Sort/Open</code></td></tr>
+<tr><td>Filter Popover</td><td><code>#filter-pop</code></td><td><code>Popover/Filters/Open</code></td></tr>
+<tr><td>Cart Drawer</td><td><code>aside[role=dialog]</code></td><td><code>Drawer/Cart/Open</code></td></tr>
+<tr><td>Rating Stars</td><td><code>svg.lucide-star</code></td><td><code>Rating/Stars</code></td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- 14) Variants -->
+<section class="ds-section ds-figma" id="figma-variants">
+<p class="ds-eyebrow">13 — Figma Bridge</p>
+<h2 class="ds-title">Variant &amp; Property Matrix</h2>
+
+<h3 class="ds-sub">Button</h3>
+<table class="ds-table">
+<thead><tr><th>Property</th><th>Type</th><th>Values</th><th>Default</th></tr></thead>
+<tbody>
+<tr><td>Variant</td><td>Variant</td><td>Primary, Secondary, Icon, Cta</td><td>Primary</td></tr>
+<tr><td>State</td><td>Variant</td><td>Default, Hover, Active, Focus, Disabled</td><td>Default</td></tr>
+<tr><td>Has Icon</td><td>Boolean</td><td>True, False</td><td>False</td></tr>
+<tr><td>Label</td><td>Text</td><td>—</td><td>"Add to cart"</td></tr>
+<tr><td>Icon</td><td>Instance Swap</td><td>Icon/*</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h3 class="ds-sub">Badge</h3>
+<table class="ds-table">
+<thead><tr><th>Property</th><th>Type</th><th>Values</th><th>Default</th></tr></thead>
+<tbody>
+<tr><td>Variant</td><td>Variant</td><td>New, Limited, Sale</td><td>New</td></tr>
+<tr><td>Label</td><td>Text</td><td>—</td><td>"New"</td></tr>
+</tbody>
+</table>
+
+<h3 class="ds-sub">Product Card</h3>
+<table class="ds-table">
+<thead><tr><th>Property</th><th>Type</th><th>Values</th><th>Default</th></tr></thead>
+<tbody>
+<tr><td>State</td><td>Variant</td><td>Default, Hover</td><td>Default</td></tr>
+<tr><td>Badge</td><td>Variant</td><td>None, New, Limited, Sale</td><td>None</td></tr>
+<tr><td>On Sale</td><td>Boolean</td><td>True, False</td><td>False</td></tr>
+<tr><td>Has Wishlist</td><td>Boolean</td><td>True, False</td><td>True</td></tr>
+<tr><td>Title</td><td>Text</td><td>—</td><td>"AirLite Runner"</td></tr>
+<tr><td>Price</td><td>Text</td><td>—</td><td>"$129"</td></tr>
+<tr><td>Image</td><td>Instance Swap</td><td>Image/*</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h3 class="ds-sub">Input</h3>
+<table class="ds-table">
+<thead><tr><th>Property</th><th>Type</th><th>Values</th><th>Default</th></tr></thead>
+<tbody>
+<tr><td>Variant</td><td>Variant</td><td>Search, Email</td><td>Search</td></tr>
+<tr><td>Theme</td><td>Variant</td><td>Light, Dark</td><td>Light</td></tr>
+<tr><td>State</td><td>Variant</td><td>Default, Focus, Filled</td><td>Default</td></tr>
+<tr><td>Has Leading Icon</td><td>Boolean</td><td>True, False</td><td>True</td></tr>
+<tr><td>Placeholder</td><td>Text</td><td>—</td><td>"Search sneakers…"</td></tr>
+</tbody>
+</table>
+
+<h3 class="ds-sub">Chip / Size Chip</h3>
+<table class="ds-table">
+<thead><tr><th>Property</th><th>Type</th><th>Values</th><th>Default</th></tr></thead>
+<tbody>
+<tr><td>Selected</td><td>Boolean</td><td>True, False</td><td>False</td></tr>
+<tr><td>Label</td><td>Text</td><td>—</td><td>"Running"</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- 15) Auto Layout -->
+<section class="ds-section ds-figma" id="figma-autolayout">
+<p class="ds-eyebrow">14 — Figma Bridge</p>
+<h2 class="ds-title">Auto Layout Specs</h2>
+<table class="ds-table">
+<thead><tr><th>Component / Pattern</th><th>Direction</th><th>Padding (H × V)</th><th>Gap</th><th>Alignment</th><th>Sizing</th></tr></thead>
+<tbody>
+<tr><td>Primary Button</td><td>Horizontal</td><td>16 × 0 (h-9)</td><td>8px</td><td>Center / Center</td><td>Hug × Fixed (36)</td></tr>
+<tr><td>Icon Button</td><td>Horizontal</td><td>0 × 0</td><td>0</td><td>Center / Center</td><td>Fixed 36 × 36</td></tr>
+<tr><td>Hero CTA</td><td>Horizontal</td><td>19 × 6 (em-based)</td><td>8px</td><td>Center / Center</td><td>Hug × Fixed</td></tr>
+<tr><td>Badge / Chip</td><td>Horizontal</td><td>10 × 0</td><td>8px</td><td>Center / Center</td><td>Hug × Hug</td></tr>
+<tr><td>Product Card</td><td>Vertical</td><td>0 (img) / 20 (body)</td><td>16px</td><td>Left / Top</td><td>Fill × Hug</td></tr>
+<tr><td>Card Body</td><td>Vertical</td><td>20 × 20</td><td>16px</td><td>Left / Top</td><td>Fill × Hug</td></tr>
+<tr><td>Search Input</td><td>Horizontal</td><td>40 × 0</td><td>—</td><td>Left / Center</td><td>Fill × Fixed (40)</td></tr>
+<tr><td>Header bar</td><td>Horizontal</td><td>24 × 0 (h-16)</td><td>16px</td><td>Space-between / Center</td><td>Fill × Fixed (64)</td></tr>
+<tr><td>Hero split</td><td>Grid</td><td>0</td><td>32px</td><td>Center</td><td>Grid <code>repeat(12,1fr)</code>, 6+6</td></tr>
+<tr><td>Product grid</td><td>Grid (columns)</td><td>0</td><td>24px</td><td>—</td><td>CSS columns 1/2/3, Fill × Hug</td></tr>
+<tr><td>Trust grid</td><td>Grid</td><td>0</td><td>12px</td><td>—</td><td>Grid 1 → <code>repeat(3,1fr)</code></td></tr>
+<tr><td>Sort Dropdown</td><td>Vertical</td><td>0</td><td>0</td><td>Left / Top</td><td>Fill × Hug</td></tr>
+<tr><td>Cart Drawer</td><td>Vertical</td><td>0</td><td>0</td><td>Stretch / Top</td><td>Fixed 420 × Fill</td></tr>
+</tbody>
+</table>
+<p class="ds-note">Container = <code>max-w-7xl (1280) mx-auto px-6/8</code> → Figma frame 1280, Hug-centered, 24/32 side padding.</p>
+</section>
+
+<!-- 16) Variables -->
+<section class="ds-section ds-figma" id="figma-variables">
+<p class="ds-eyebrow">15 — Figma Bridge</p>
+<h2 class="ds-title">Variables Bridge</h2>
+<p class="ds-lead">Names match <code>custom.css</code> exactly (<code>/</code> → <code>-</code>, lowercased). Single light mode. Primitives feed Semantic; Scale holds numerics.</p>
+<table class="ds-table">
+<thead><tr><th>CSS variable</th><th>Computed</th><th>Figma path</th><th>Collection</th></tr></thead>
+<tbody>
+<tr><td><code>--black</code></td><td>#000000</td><td>Color/Black</td><td>Primitives</td></tr>
+<tr><td><code>--gray-50</code></td><td>#F9FAFB</td><td>Color/Gray/50</td><td>Primitives</td></tr>
+<tr><td><code>--emerald-500</code></td><td>#10B981</td><td>Color/Emerald/500</td><td>Primitives</td></tr>
+<tr><td><code>--rose-600</code></td><td>#E11D48</td><td>Color/Rose/600</td><td>Primitives</td></tr>
+<tr><td><code>--amber-500</code></td><td>#F59E0B</td><td>Color/Amber/500</td><td>Primitives</td></tr>
+<tr><td><code>--color-primary</code></td><td>#000000</td><td>Color/Primary</td><td>Semantic</td></tr>
+<tr><td><code>--color-bg-page</code></td><td>#F9FAFB</td><td>Color/Bg/Page</td><td>Semantic</td></tr>
+<tr><td><code>--color-bg-surface</code></td><td>#FFFFFF</td><td>Color/Bg/Surface</td><td>Semantic</td></tr>
+<tr><td><code>--color-bg-glass</code></td><td>rgba(255,255,255,.4)</td><td>Color/Bg/Glass</td><td>Semantic</td></tr>
+<tr><td><code>--color-border-subtle</code></td><td>rgba(0,0,0,.05)</td><td>Color/Border/Subtle</td><td>Semantic</td></tr>
+<tr><td><code>--color-text-secondary</code></td><td>rgba(0,0,0,.6)</td><td>Color/Text/Secondary</td><td>Semantic</td></tr>
+<tr><td><code>--color-success</code></td><td>#059669</td><td>Color/Success</td><td>Semantic</td></tr>
+<tr><td><code>--color-sale</code></td><td>#E11D48</td><td>Color/Sale</td><td>Semantic</td></tr>
+<tr><td><code>--space-4</code></td><td>16px</td><td>Spacing/4</td><td>Scale</td></tr>
+<tr><td><code>--space-6</code></td><td>24px</td><td>Spacing/6</td><td>Scale</td></tr>
+<tr><td><code>--radius-button</code></td><td>12px</td><td>Radius/Button</td><td>Scale</td></tr>
+<tr><td><code>--radius-card</code></td><td>24px</td><td>Radius/Card</td><td>Scale</td></tr>
+<tr><td><code>--shadow-card</code></td><td>0 25px 50px -12px rgba(0,0,0,.25)</td><td>Shadow/Card</td><td>Scale</td></tr>
+<tr><td><code>--font-size-body</code></td><td>14px</td><td>FontSize/Body</td><td>Scale</td></tr>
+<tr><td><code>--duration-base</code></td><td>300ms</td><td>Duration/Base</td><td>Motion</td></tr>
+<tr><td><code>--easing-default</code></td><td>cubic-bezier(0.4,0,0.2,1)</td><td>Easing/Default</td><td>Motion</td></tr>
+<tr><td><code>--z-overlay</code></td><td>50</td><td>Z/Overlay</td><td>Scale</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- 17) Dev Mode -->
+<section class="ds-section ds-figma" id="figma-devmode">
+<p class="ds-eyebrow">16 — Figma Bridge</p>
+<h2 class="ds-title">Dev Mode Annotations</h2>
+<pre class="ds-pre"><span class="c">Button / Primary / Default</span>
+─────────────────────────────────────────
+Corner radius    : 12px          <span class="c">(--radius-button)</span>
+Border           : none
+Background       : #000000        <span class="c">(--color-primary)</span>
+Padding          : 0 16px         <span class="c">(--spacing-button-x)</span>
+Height           : 36px           <span class="c">(h-9)</span>
+Gap (icon+label) : 8px            <span class="c">(--spacing-gap)</span>
+Font             : Geist 400 14px / 20px
+Text color       : #FFFFFF        <span class="c">(--color-on-primary)</span>
+Shadow           : none
+
+<span class="k">Hover delta:</span>   opacity 1 → 0.9
+<span class="k">Active delta:</span>  transform scale(1) → 0.95
+<span class="k">Disabled delta:</span> opacity → 0.3, cursor default</pre>
+
+<pre class="ds-pre"><span class="c">Button / Secondary / Default</span>
+─────────────────────────────────────────
+Corner radius    : 8px            <span class="c">(--radius-button-sm)</span>
+Border           : 1px solid rgba(0,0,0,.05)   <span class="c">(--color-border-subtle)</span>
+Background       : #FFFFFF        <span class="c">(--color-bg-surface)</span>
+Padding          : 0 12px         <span class="c">(--spacing-button-x)</span>
+Height           : 36px
+Text color       : rgba(0,0,0,.7) <span class="c">(--color-text-strong→/70)</span>
+
+<span class="k">Hover delta:</span>   background #FFFFFF → rgba(0,0,0,.05)</pre>
+
+<pre class="ds-pre"><span class="c">Card / Product / Default</span>
+─────────────────────────────────────────
+Corner radius    : 24px           <span class="c">(--radius-card)</span>
+Border           : 1px solid rgba(0,0,0,.05)   <span class="c">(--color-border-subtle)</span>
+Background       : rgba(255,255,255,.4)         <span class="c">(--color-bg-glass)</span>
+Backdrop blur    : 8px            <span class="c">(.backdrop-blur)</span>
+Body padding     : 20px           <span class="c">(p-5 / --spacing-card)</span>
+Overflow         : hidden
+
+<span class="k">Hover delta:</span>   background → #FFFFFF
+                shadow none → 0 25px 50px -12px rgba(0,0,0,.25)  <span class="c">(--shadow-card)</span>
+                transition: all 300ms cubic-bezier(0.4,0,0.2,1)</pre>
+
+<pre class="ds-pre"><span class="c">Input / Search / Default</span>
+─────────────────────────────────────────
+Corner radius    : 12px           <span class="c">(--radius-button)</span>
+Border           : 1px solid rgba(0,0,0,.05)   <span class="c">(--color-border-subtle)</span>
+Background       : rgba(255,255,255,.7)         <span class="c">(--color-bg-glass-strong)</span>
+Backdrop blur    : 8px
+Padding          : 0 40px         <span class="c">(pl-10 pr-10, icon + ⌘K slots)</span>
+Height           : 40px
+Placeholder      : rgba(0,0,0,.4) <span class="c">(--color-text-faint)</span>
+
+<span class="k">Focus delta:</span>   ring 2px rgba(0,0,0,.05) + border → rgba(0,0,0,.1)
+                outline: none</pre>
+
+<pre class="ds-pre"><span class="c">Badge / Sale</span>
+─────────────────────────────────────────
+Corner radius    : 9999px         <span class="c">(--radius-pill)</span>
+Background       : rgba(244,63,94,.10)          <span class="c">(--color-sale-bg)</span>
+Border           : 1px solid rgba(244,63,94,.20) <span class="c">(--color-sale-border)</span>
+Padding          : 0 10px         <span class="c">(px-2.5)</span>
+Height           : 28px           <span class="c">(h-7)</span>
+Font             : Geist 400 12px
+Text color       : #BE123C        <span class="c">(rose-700)</span></pre>
+
+<pre class="ds-pre"><span class="c">Drawer / Cart / Open</span>
+─────────────────────────────────────────
+Width            : 420px (sm) / 100% (base)
+Background       : #FFFFFF
+Border-left      : 1px solid rgba(0,0,0,.05)
+Shadow           : 0 25px 50px -12px rgba(0,0,0,.25)  <span class="c">(--shadow-drawer)</span>
+Scrim            : rgba(0,0,0,.4) <span class="c">(--color-scrim)</span>
+Z-index          : 50             <span class="c">(--z-drawer)</span>
+Transition       : transform 150ms (translate-x-full → 0)</pre>
+</section>
+
+<!-- 18) Code Connect -->
+<section class="ds-section ds-figma" id="figma-codeconnect">
+<p class="ds-eyebrow">17 — Figma Bridge</p>
+<h2 class="ds-title">Code Connect Reference</h2>
+<p class="ds-lead">Vanilla HTML — examples emit the reference's exact element + Tailwind classes. Paste into a <code>.figma.ts</code> file and replace the URL.</p>
+
+<pre class="ds-pre"><span class="c">// Framework: Vanilla HTML</span>
+<span class="c">// Button — Primary / Secondary / Icon / Cta</span>
+figma.connect("<span class="c">// TODO: paste Figma node URL</span>", {
+  props: {
+    variant: figma.enum("Variant", {
+      Primary: "primary",
+      Secondary: "secondary",
+      Icon: "icon",
+      Cta: "cta",
+    }),
+    state: figma.enum("State", {
+      Default: "default", Hover: "hover", Active: "active",
+      Focus: "focus", Disabled: "disabled",
+    }),
+    hasIcon: figma.boolean("Has Icon"),
+    label: figma.string("Label"),
+  },
+  example: ({ label }) =&gt; (
+    `&lt;button class="h-9 px-4 rounded-xl bg-black text-white text-sm hover:opacity-90 transition font-geist"&gt;${label}&lt;/button&gt;`
+  ),
+});</pre>
+
+<pre class="ds-pre"><span class="c">// Framework: Vanilla HTML</span>
+<span class="c">// Badge — New / Limited / Sale</span>
+figma.connect("<span class="c">// TODO: paste Figma node URL</span>", {
+  props: {
+    variant: figma.enum("Variant", {
+      New: "new", Limited: "limited", Sale: "sale",
+    }),
+    label: figma.string("Label"),
+  },
+  example: ({ label }) =&gt; (
+    `&lt;div class="inline-flex items-center px-2.5 h-7 rounded-full bg-emerald-500/10 text-emerald-700 text-xs border border-emerald-500/20 font-geist"&gt;${label}&lt;/div&gt;`
+  ),
+});</pre>
+
+<pre class="ds-pre"><span class="c">// Framework: Vanilla HTML</span>
+<span class="c">// Card — Product</span>
+figma.connect("<span class="c">// TODO: paste Figma node URL</span>", {
+  props: {
+    onSale: figma.boolean("On Sale"),
+    badge: figma.enum("Badge", { None: "", New: "new", Limited: "limited", Sale: "sale" }),
+    title: figma.string("Title"),
+    price: figma.string("Price"),
+  },
+  example: ({ title, price }) =&gt; (
+    `&lt;div class="group break-inside-avoid block rounded-3xl overflow-hidden bg-white/40 backdrop-blur border border-black/5 hover:bg-white hover:shadow-2xl hover:shadow-black/5 transition-all duration-300"&gt;
+  &lt;div class="p-5"&gt;
+    &lt;h3 class="text-base font-medium text-black tracking-tight font-geist"&gt;${title}&lt;/h3&gt;
+    &lt;p class="text-sm text-black/80 font-geist"&gt;${price}&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;`
+  ),
+});</pre>
+
+<pre class="ds-pre"><span class="c">// Framework: Vanilla HTML</span>
+<span class="c">// Input — Search / Email</span>
+figma.connect("<span class="c">// TODO: paste Figma node URL</span>", {
+  props: {
+    variant: figma.enum("Variant", { Search: "text", Email: "email" }),
+    theme: figma.enum("Theme", { Light: "light", Dark: "dark" }),
+    hasLeadingIcon: figma.boolean("Has Leading Icon"),
+    placeholder: figma.string("Placeholder"),
+  },
+  example: ({ placeholder }) =&gt; (
+    `&lt;input type="text" placeholder="${placeholder}" class="w-full h-10 pr-10 pl-10 rounded-xl border border-black/5 bg-white/70 backdrop-blur placeholder-black/40 text-sm outline-none focus:ring-2 focus:ring-black/5 focus:border-black/10 transition"/&gt;`
+  ),
+});</pre>
+
+<pre class="ds-pre"><span class="c">// Framework: Vanilla HTML</span>
+<span class="c">// Chip — Filter / Size</span>
+figma.connect("<span class="c">// TODO: paste Figma node URL</span>", {
+  props: {
+    selected: figma.boolean("Selected"),
+    label: figma.string("Label"),
+  },
+  example: ({ label }) =&gt; (
+    `&lt;label class="inline-flex items-center gap-2 px-3 h-8 rounded-lg border border-black/5 bg-black/5 text-xs text-black/70 cursor-pointer select-none"&gt;&lt;input class="peer appearance-none h-0 w-0" type="checkbox"/&gt;&lt;span class="peer-checked:text-black peer-checked:bg-white peer-checked:border-black/10 px-0 font-geist"&gt;${label}&lt;/span&gt;&lt;/label&gt;`
+  ),
+});</pre>
+</section>
+
+<!-- Scripts -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+
+    // Scroll-spy for the utility nav
+    const links = Array.from(document.querySelectorAll('#ds-nav a'));
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    document.querySelectorAll('section[id], section#hero').forEach(s => obs.observe(s));
+
+    // Motion replay
+    const replay = document.getElementById('ds-replay');
+    replay?.addEventListener('click', () => {
+      document.querySelectorAll('.animate-pulse').forEach(el => {
+        el.classList.remove('animate-pulse');
+        void el.offsetWidth;
+        el.classList.add('animate-pulse');
+      });
+    });
+  });
+</script>
+</body>
+</html>
